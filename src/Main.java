@@ -35,6 +35,9 @@ public class Main {
                     System.out.println(board.drawBoard());
                     System.out.println("Your score is : " + board.getScore());
                     System.out.println("Pellets remaining: " + board.getPelletCount());
+                    if (board.isImmune()) {
+                        System.out.println("You're immune!!!");
+                    }
                 } else {
                     System.out.println("You cannot move there.");
                 }

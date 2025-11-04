@@ -4,9 +4,16 @@ import java.util.Comparator;
 public class Ghost {
     private Location ghostLocation;
     private Board board;
+    private boolean alive;
     public Ghost(Location ghostLocation, Board board) {
         this.ghostLocation = ghostLocation;
         this.board = board;
+        this.alive = true;
+    }
+
+    public void kill() {
+        this.alive = false;
+        ghostLocation = null;
     }
 
     public Location getGhostLocation() {
@@ -30,6 +37,9 @@ public class Ghost {
     }
 
     public Direction computeMove() {
+        if (!alive) {
+            return null;
+        }
         Location pacman = board.getPacman();
         ArrayList<Direction> legalMoves = new ArrayList<>();
         legalMoves.add(null);
@@ -40,6 +50,10 @@ public class Ghost {
         }
 
         legalMoves.sort((a, b) -> (int) (((this.eval(b) - this.eval(a))*100)));
-        return legalMoves.isEmpty() ? null : legalMoves.getLast();
+        if (!board.isImmune()) {
+            return legalMoves.isEmpty() ? null : legalMoves.getLast();
+        } else {
+            return legalMoves.isEmpty() ? null : legalMoves.getFirst();
+        }
     }
 }

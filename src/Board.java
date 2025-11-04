@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random; // Import Random class for generating random numbers
 
 public class Board {  
@@ -9,6 +12,8 @@ public class Board {
     private int level;
     private final Ghost[] ghosts;
     private boolean gameOver;
+    private boolean immune = false;
+    private int immunityClock = 0;
 
 
     public Board(int size, Location pacmanLocation) { 
@@ -38,7 +43,6 @@ public class Board {
         int baseWall = 10; // starting wall chance at level 1
         int basePellet = 10; // starting pellet chance at level 1
         int basePower = 5; // small constant chance for power pellets
-
         // adjust by level: walls increase, pellets decrease
         int wallChance = Math.min(80, baseWall + (level - 1) * 6); // increase walls by ~6% per level
         int pelletChance = Math.max(3, basePellet - (level - 1) * 6); // decrease pellets by ~6% per level
@@ -135,8 +139,18 @@ public class Board {
         }
         return board[location.getY()][location.getX()] != '#';
     }
+
+    public boolean isImmune() {
+        return immune;
+    }
     // Attempt to move Pacman in the specified direction
     public boolean move(Direction direction) {
+        if (immune) {
+            immunityClock--;
+            if (immunityClock == 0) {
+                immune = false;
+            }
+        }
         // tries to move pacman in the given direction returns true if successful false if the movement resulted in a collision
         // if moving was successful then ghosts are also moved
         Location newLocation = this.pacman.move(direction);
@@ -149,7 +163,8 @@ public class Board {
             
         }
         if  (board[newLocation.getY()][newLocation.getX()] == 'l') {
-            score += 5;// to replace with power pellet logic
+            immune = true;
+            immunityClock = 5;
         }
         board[pacman.getY()][pacman.getX()] = ' '; // Clear old pacman position
         pacman = newLocation; // Update pacman's location
@@ -157,7 +172,11 @@ public class Board {
         for (Ghost ghost : ghosts) { // calculate the ghost's moves
             ghost.move();
             if (ghost.getGhostLocation().equals(pacman)) {
-                gameOver = true;
+                if (!immune) {
+                    gameOver = true;
+                } else {
+                    ghost.kill();
+                }
             }
         }
         return true;
