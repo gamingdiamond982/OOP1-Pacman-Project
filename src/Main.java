@@ -35,6 +35,49 @@ public class Main extends JFrame {
         setVisible(true);
     }
 
+    private void showGameOver() {
+        if (currentPanel != null) {
+            remove(currentPanel);
+        }
+
+        removeKeyListener(getKeyListeners().length > 0 ? getKeyListeners()[0] : null);
+
+        JPanel menuPanel = new JPanel();
+        menuPanel.setBackground(Color.BLACK);
+        menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
+        menuPanel.add(Box.createVerticalGlue());
+
+        JLabel titleLabel = new JLabel("GAME OVER");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        titleLabel.setForeground(Color.YELLOW);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        menuPanel.add(titleLabel);
+
+        menuPanel.add(Box.createVerticalStrut(50));
+
+        JButton newGameButton = new JButton("New Game");
+        newGameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        newGameButton.setPreferredSize(new Dimension(150, 50));
+        newGameButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        newGameButton.addActionListener(e -> startNewGame(1));
+        menuPanel.add(newGameButton);
+
+        menuPanel.add(Box.createVerticalStrut(20));
+
+        JButton quitButton = new JButton("Quit");
+        quitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        quitButton.setPreferredSize(new Dimension(150, 50));
+        quitButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        quitButton.addActionListener(e -> System.exit(0));
+        menuPanel.add(quitButton);
+        menuPanel.add(Box.createVerticalGlue());
+
+        currentPanel = menuPanel;
+        add(menuPanel, BorderLayout.CENTER);
+        revalidate();
+        repaint();
+    }
+
     private void showMainMenu() {
         totalScore = 0;
         // Clear current panel if exists
@@ -90,7 +133,7 @@ public class Main extends JFrame {
         } catch (IOException e) {
             ghostImage = null;
         }
-        setTitle("Game Interface Demo");
+        setTitle("Pacman");
         setSize(500, 597);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -133,6 +176,10 @@ public class Main extends JFrame {
                 if (board.getPelletCount() == 0) {
                     totalScore += board.getScore();
                     startNewGame(level + 1);
+                }
+
+                if (board.isGameOver()) {
+                    showGameOver();
                 }
                 gamePanel.repaint();
             }
