@@ -92,7 +92,7 @@ public class Main extends JFrame {
         setSize(500, 597);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        board = new Board(10, new Location(1, 0), 24467004L, 1);
+        board = new Board(10, new Location(1, 0), System.currentTimeMillis(), 1);
         // Initialize game elements
         obstacles = board.getObstacles();
         pellets = board.getPellets();
