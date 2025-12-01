@@ -1,7 +1,6 @@
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Random; // Import Random class for generating random numbers
+import java.util.Random;
 
 public class Board {  
     private int pelletCount; // Number of pellets on the board
@@ -69,7 +68,7 @@ public class Board {
                     this.board[i][j] = '.';
                     pelletCount += 1;
                 } else {
-                    this.board[i][j] = ' ';
+                    this.board[i][j] = '*';
                 }
             }
         }
@@ -91,6 +90,33 @@ public class Board {
             if (this.board[py][px] == '.') pelletCount = Math.max(0, pelletCount - 1);
             this.board[py][px] = 'P';
         }
+    }
+
+    public ArrayList<Point> getObstacles() {
+        return getChars('#');
+    }
+
+
+    public ArrayList<Point> getPellets() {
+        return getChars('.');
+    }
+
+    public ArrayList<Point> getPowerups() {
+        return getChars('l');
+    }
+
+    private ArrayList<Point> getChars(char c) {
+
+        ArrayList<Point> result = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (this.board[i][j] == c) {
+                    result.add(Location.toPoint(new Location(j, i)));
+                }
+            }
+
+        }
+        return result;
     }
 
     public String drawBoard() {
@@ -145,6 +171,9 @@ public class Board {
     }
     // Attempt to move Pacman in the specified direction
     public boolean move(Direction direction) {
+        if (direction == null) {
+            return false;
+        }
         if (immune) {
             immunityClock--;
             if (immunityClock == 0) {
@@ -166,7 +195,7 @@ public class Board {
             immune = true;
             immunityClock = 5;
         }
-        board[pacman.getY()][pacman.getX()] = ' '; // Clear old pacman position
+        board[pacman.getY()][pacman.getX()] = '*'; // Clear old pacman position
         pacman = newLocation; // Update pacman's location
         board[pacman.getY()][pacman.getX()] = 'P';
         for (Ghost ghost : ghosts) { // calculate the ghost's moves
@@ -198,6 +227,15 @@ public class Board {
         }
         return 1;
         
+    }
+
+    public ArrayList<Point> getGhosts() {
+        ArrayList<Point> result = new ArrayList<>();
+        for (Ghost g: ghosts) {
+            Location l = Location.toGridCoords(g.getGhostLocation());
+            result.add(new Point(l.getX(), l.getY()));
+        }
+        return result;
     }
 }
 
