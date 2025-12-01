@@ -58,7 +58,7 @@ public class Main extends JFrame {
         newGameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         newGameButton.setPreferredSize(new Dimension(150, 50));
         newGameButton.setFont(new Font("Arial", Font.PLAIN, 20));
-        newGameButton.addActionListener(e -> startNewGame());
+        newGameButton.addActionListener(e -> startNewGame(1));
         menuPanel.add(newGameButton);
 
         menuPanel.add(Box.createVerticalStrut(20));
@@ -79,7 +79,7 @@ public class Main extends JFrame {
     }
 
 
-    private void startNewGame() {
+    private void startNewGame(int level) {
         if (currentPanel != null) {
             remove(currentPanel);
         }
@@ -92,7 +92,7 @@ public class Main extends JFrame {
         setSize(500, 597);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        board = new Board(10, new Location(1, 0), System.currentTimeMillis(), 1);
+        board = new Board(10, new Location(0, 0), System.currentTimeMillis(), level);
         // Initialize game elements
         obstacles = board.getObstacles();
         pellets = board.getPellets();
@@ -128,6 +128,9 @@ public class Main extends JFrame {
                 ghosts = board.getGhosts();
                 powerups = board.getPowerups();
                 scoreLabel.setText("Score: " + board.getScore());
+                if (board.getPelletCount() == 0) {
+                    startNewGame(level + 1);
+                }
                 gamePanel.repaint();
             }
             @Override
@@ -217,7 +220,7 @@ public class Main extends JFrame {
         JButton menuButton = new JButton("Menu");
         JButton resetButton = new JButton("Reset");
         menuButton.addActionListener(_ -> showMainMenu());
-        resetButton.addActionListener(_ -> startNewGame());
+        resetButton.addActionListener(_ -> startNewGame(1));
         controlPanel.add(menuButton);
         controlPanel.add(resetButton);
         controlPanel.setBackground(Color.LIGHT_GRAY);
