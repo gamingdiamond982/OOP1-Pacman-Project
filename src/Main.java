@@ -22,6 +22,7 @@ public class Main extends JFrame {
     private Board board;
     private Image ghostImage;
     private JPanel currentPanel;
+    private int totalScore = 0;
 
 
     public Main() {
@@ -35,6 +36,7 @@ public class Main extends JFrame {
     }
 
     private void showMainMenu() {
+        totalScore = 0;
         // Clear current panel if exists
         if (currentPanel != null) {
             remove(currentPanel);
@@ -127,8 +129,9 @@ public class Main extends JFrame {
                 pellets = board.getPellets();
                 ghosts = board.getGhosts();
                 powerups = board.getPowerups();
-                scoreLabel.setText("Score: " + board.getScore());
+                scoreLabel.setText("Score: " + (totalScore + board.getScore()));
                 if (board.getPelletCount() == 0) {
+                    totalScore += board.getScore();
                     startNewGame(level + 1);
                 }
                 gamePanel.repaint();
@@ -209,7 +212,7 @@ public class Main extends JFrame {
 
     private JPanel createScorePanel() {
         JPanel scorePanel = new JPanel();
-        scoreLabel = new JLabel("Score: " + board.getScore());
+        scoreLabel = new JLabel("Score: " + totalScore);
         scorePanel.add(scoreLabel);
         scorePanel.setBackground(Color.GRAY);
         return scorePanel;
